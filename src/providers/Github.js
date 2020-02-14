@@ -5,10 +5,8 @@ function Github({ href }) {
 
   React.useEffect(() => {
     setRepoPath(new URL(href).pathname.replace("/", ""));
-  }, []);
+  }, [href]);
 
-
-  
   return (
     <div>
       <div

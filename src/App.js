@@ -4,8 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Select from "react-select";
 import Post from "./Post";
-import Telegram from "./providers/Telegram";
-import Image from "./providers/Image";
+import { LinkOrgContext, linkOrgService } from './link-org-context'
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -33,77 +32,99 @@ const useStyles = makeStyles(theme => ({
 
 function App() {
   const classes = useStyles();
-  const [values, setValues] = useState({
-    name: ""
-  });
+  const [postURL, setPostURL] = useState("");
   const [posts, setPosts] = useState([]);
-  const [tags, setTags] = useState([]);
-
-  const handleChange = name => event => {
-    setValues({ ...values, [name]: event.target.value });
+  const [availableTags, setAvailableTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedFilter, setSelectedFilter] = React.useState([]);
+  
+  let providers = {
+    twitter: RegExp("twitter"),
+    reddit: RegExp("reddit"),
+    youtube: RegExp("youtube"),
+    github: RegExp("github"),
+    instagram: RegExp("instagram"),
+    telegram: RegExp("t.me"),
+    image: RegExp(".(gif|jpg|jpeg|tiff|png)"),
+    video: RegExp(".mp4")
   };
 
+
   useEffect(() => {
-    function fetchPosts() {
-      return fetch("http://localhost:5050/posts", {
-        method: "GET",
-        mode: "cors"
-      })
-        .then(response => response.json())
-        .then(myJson => myJson);
-    }
-    function fetchTags() {
-      return fetch("http://localhost:5050/tags", {
-        method: "GET",
-        mode: "cors"
-      })
-        .then(response => response.json())
-        .then(myJson => myJson);
-    }
-    fetchPosts().then(posts => setPosts(posts));
-    fetchTags().then(tags => setTags(tags));
+    linkOrgService.fetchPosts().then(posts => setPosts(posts));
+    linkOrgService.fetchTags().then(tags => setAvailableTags(tags));
   }, []);
 
   function handleRemove(postId) {
-    console.log(postId);
     setPosts(posts.filter(p => postId !== p.id));
+    linkOrgService.deletePost(postId);
+  }
+  
+  function createPost() {
+    const currentProvider = Object.keys(providers).find(provider =>
+        providers[provider].test(postURL)
+    );
+    const post = {
+      provider: currentProvider,
+      href: postURL,
+      tags: selectedTags
+    };
+    linkOrgService.sendPost(post).then(newPost => (setPosts([...posts, newPost])));
   }
 
+   const onFilterChange = selectedOptions => {
+     setSelectedFilter(selectedOptions)
+  };
+
+  const onTagsChange = selectedOptions => {
+    setSelectedTags(selectedOptions)
+  };
+
   return (
-    <div>
-      <div className={classes.postAdding}>
-        <TextField
-          id="standard-name"
-          label="URL"
-          className={classes.textField}
-          value={values.name}
-          onChange={handleChange("name")}
-          margin="normal"
-        />
-        <Select
-          isMulti
-          name="tags"
-          className={classes.tagSelect}
-          options={tags}
-        />
-        <Button variant="contained" className={classes.button}>
-          Add Post
-        </Button>
+    <LinkOrgContext.Provider value={linkOrgService}>
+      <div>
+        <div className={classes.postAdding}>
+          <TextField
+            id="standard-name"
+            label="URL"
+            className={classes.textField}
+            value={postURL}
+            onChange={event => setPostURL(event.target.value)}
+            margin="normal"
+          />
+          <Select
+            isMulti
+            name="tags"
+            className={classes.tagSelect}
+            options={availableTags}
+            value={selectedTags}
+            onChange={onTagsChange}
+          />
+          <Button variant="contained" className={classes.button} onClick={createPost}>
+            Add Post
+          </Button>
+        </div>
+        <div className={classes.filterPost}>
+          <div className={classes.filter}>Filter</div>
+          <Select
+            isMulti
+            name="tags"
+            className={classes.tagSelect}
+            options={availableTags}
+            value={selectedFilter}
+            onChange={onFilterChange}
+          />
+        </div>
+        {posts.map((post, index) =>
+          <Post
+            post={post}
+            key={index}
+            availableTags={availableTags}
+            onRemove={handleRemove}
+          />
+        )}
       </div>
-      <div className={classes.filterPost}>
-        <div className={classes.filter}>Filter</div>
-        <Select
-          isMulti
-          name="tags"
-          className={classes.tagSelect}
-          options={tags}
-        />
-      </div>
-      {posts.map((post, index) => {
-        return <Post post={post} availableTags={tags} key={index} onRemove={handleRemove}></Post>;
-      })}
-      
-    </div>
+    </LinkOrgContext.Provider>
   );
 }
 
