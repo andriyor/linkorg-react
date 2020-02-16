@@ -59,10 +59,19 @@ function Post({ post, tags, onRemove }) {
         >
         </ComponentName>
         <div className={classes.postAction}>
-          <IconButton className={classes.button} aria-label="delete" onClick={() => onRemove(post.id)}>
+          <IconButton
+            className={classes.button}
+            aria-label="delete"
+            onClick={() => onRemove(post.id)}
+          >
             <Icon>clear</Icon>
           </IconButton>
-          <IconButton className={classes.button} aria-label="delete" onClick={() => onCopy(post.href)}>
+          <IconButton
+            className={classes.button}
+            aria-label="delete"
+            data-test-id="copy"
+            onClick={() => onCopy(post.href)}
+          >
             <Icon>content_copy</Icon>
           </IconButton>
         </div>

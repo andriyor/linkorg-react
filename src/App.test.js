@@ -9,8 +9,8 @@ async function paste(page) {
 
 describe('posts', () => {
   test('youtube', async () => {
-    let browser = await puppeteer.launch({headless: false});
-    let page = await browser.newPage();
+    const browser = await puppeteer.launch({headless: false});
+    const page = await browser.newPage();
 
     const NEW_URL= 'https://www.youtube.com/watch?v=vYmSYsj-s5w';
     await clipboardy.write(NEW_URL);
@@ -36,8 +36,8 @@ describe('posts', () => {
     browser.close();
   }, 16000);
   test('telegram', async () => {
-    let browser = await puppeteer.launch({headless: false});
-    let page = await browser.newPage();
+    const browser = await puppeteer.launch({headless: false});
+    const page = await browser.newPage();
 
     const NEW_URL= 'https://t.me/libmustdie/4025';
     await clipboardy.write(NEW_URL);
@@ -62,9 +62,9 @@ describe('posts', () => {
 
     browser.close();
   }, 16000);
-   test('reddit', async () => {
-    let browser = await puppeteer.launch({headless: false});
-    let page = await browser.newPage();
+  test('reddit', async () => {
+    const browser = await puppeteer.launch({headless: false});
+    const page = await browser.newPage();
 
     const NEW_URL= 'https://www.reddit.com/r/PinkFloydCircleJerk/comments/f4qruf/since_you_all_liked_my_wish_you_were_hete_fanart/';
     await clipboardy.write(NEW_URL);
@@ -84,6 +84,19 @@ describe('posts', () => {
     await page.waitFor(1000);
     const inputValue = await page.$eval(LAST_IFRAME_SELECTOR, e => e.getAttribute('data-test-id'));
     expect(inputValue).toBe('reddit');
+
+    browser.close();
+  }, 16000);
+  test('copy href', async () => {
+    const browser = await puppeteer.launch({headless: false});
+    const page = await browser.newPage();
+    await page.goto('http://localhost:3000/');
+    const EXPECTED_URL = 'https://twitter.com/sutulaiasobaka/status/1213972120683917314';
+
+    const LAST_IFRAME_SELECTOR = '[data-test-id="copy"]:last-of-type';
+    await page.click(LAST_IFRAME_SELECTOR);
+    const copied = await clipboardy.read();
+    expect(copied).toBe(EXPECTED_URL);
 
     browser.close();
   }, 16000);
