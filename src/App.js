@@ -79,13 +79,13 @@ function App() {
   const onTagsChange = selectedOptions => {
     setSelectedTags(selectedOptions)
   };
-
   return (
     <LinkOrgContext.Provider value={linkOrgService}>
       <div>
         <div className={classes.postAdding}>
           <TextField
             id="standard-name"
+            data-test-id="post-url"
             label="URL"
             className={classes.textField}
             value={postURL}
@@ -93,14 +93,18 @@ function App() {
             margin="normal"
           />
           <Select
+            id="data-test-select-id"
             isMulti
-            name="tags"
+            name="add-tags"
             className={classes.tagSelect}
             options={availableTags}
             value={selectedTags}
             onChange={onTagsChange}
           />
-          <Button variant="contained" className={classes.button} onClick={createPost}>
+          <Button variant="contained"
+                  data-test-id="add-post"
+                  className={classes.button}
+                  onClick={createPost}>
             Add Post
           </Button>
         </div>

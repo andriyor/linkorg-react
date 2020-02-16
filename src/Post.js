@@ -13,7 +13,6 @@ import Video from "./providers/Video";
 import Github from "./providers/Github";
 import Instagram from "./providers/Instagram";
 
-
 const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(1)
@@ -46,7 +45,7 @@ function Post({ post, tags, onRemove }) {
   const ComponentName = providers[post.provider.name];
 
   return (
-    <div>
+    <div data-test-id="post-wrapper">
       <div className={classes.post}>
         <ComponentName href={post.href}></ComponentName>
         <div className={classes.postAction}>
