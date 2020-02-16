@@ -46,8 +46,14 @@ function Post({ post, tags, onRemove }) {
 
   return (
     <div data-test-id="post-wrapper">
-      <div className={classes.post}>
-        <ComponentName href={post.href}></ComponentName>
+      <div
+        className={classes.post}
+        data-test-id={post.provider.name}
+      >
+        <ComponentName
+          href={post.href}
+        >
+        </ComponentName>
         <div className={classes.postAction}>
           <IconButton className={classes.button} aria-label="delete" onClick={() => onRemove(post.id)}>
             <Icon>clear</Icon>
