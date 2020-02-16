@@ -44,6 +44,10 @@ function Post({ post, tags, onRemove }) {
   };
   const ComponentName = providers[post.provider.name];
 
+  function onCopy(href) {
+    navigator.clipboard.writeText(href);
+  }
+
   return (
     <div data-test-id="post-wrapper">
       <div
@@ -58,7 +62,7 @@ function Post({ post, tags, onRemove }) {
           <IconButton className={classes.button} aria-label="delete" onClick={() => onRemove(post.id)}>
             <Icon>clear</Icon>
           </IconButton>
-          <IconButton className={classes.button} aria-label="delete">
+          <IconButton className={classes.button} aria-label="delete" onClick={() => onCopy(post.href)}>
             <Icon>content_copy</Icon>
           </IconButton>
         </div>
