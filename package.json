@@ -43,6 +43,12 @@
   "devDependencies": {
     "jest": "^24.9.0",
     "jest-cli": "^25.1.0",
-    "puppeteer": "^2.1.1"
+    "jest-puppeteer": "^4.4.0",
+    "puppeteer": "^2.1.1",
+    "react-app-rewired": "^2.1.5"
+  },
+  "jest": {
+    "verbose": true,
+    "preset": "jest-puppeteer"
   }
 }
